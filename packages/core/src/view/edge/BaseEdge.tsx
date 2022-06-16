@@ -1,6 +1,5 @@
 import { h, Component } from 'preact';
-import { assign } from 'lodash-es';
-import Arrow, { ArrowStyle } from './Arrow';
+import { ArrowStyle } from './Arrow';
 import BaseEdgeModel from '../../model/edge/BaseEdgeModel';
 import GraphModel from '../../model/GraphModel';
 import LineText from '../text/LineText';
@@ -59,23 +58,49 @@ export default class BaseEdge extends Component<IProps> {
   getArrowStyle() {
     const { model, graphModel } = this.props;
     const edgeStyle = model.getEdgeStyle();
+    const edgeAnimationStyle = model.getEdgeAnimationStyle();
     const { arrow } = graphModel.theme;
+    const stroke = model.isAnimation ? edgeAnimationStyle.stroke : edgeStyle.stroke;
     return {
       ...edgeStyle,
-      fill: edgeStyle.stroke,
+      fill: stroke,
+      stroke,
       ...arrow,
     } as ArrowStyle;
   }
   getArrow() {
-    const arrowInfo = this.getArrowInfo();
-    const { start, end } = arrowInfo;
-    // 起终点缺失，或者重合不渲染箭头
-    if ((!start || !end) || (start.x === end.x && start.y === end.y)) {
-      return;
-    }
-    const style = this.getArrowStyle();
     return (
-      <Arrow arrowInfo={arrowInfo} style={style} />
+      <g>
+        <defs>
+          {this.getStartArrow()}
+          {this.getEndArrow()}
+        </defs>
+      </g>
+    );
+  }
+  getStartArrow() {
+    const { model, graphModel } = this.props;
+    const { id } = model;
+    const { arrow } = graphModel.theme;
+    const { offset, verticalLength } = arrow;
+    const { stroke, strokeWidth } = this.getArrowStyle();
+    return (
+      <marker id={`marker-start-${id}`} refX="-1" overflow="visible" orient="auto" markerUnits="userSpaceOnUse">
+        <path stroke={stroke} fill={stroke} strokeWidth={strokeWidth} d={`M 0 0 L ${offset} -${verticalLength} L ${offset} ${verticalLength} Z`} />
+      </marker>
+    );
+
+  }
+  getEndArrow() {
+    const { model, graphModel } = this.props;
+    const { id } = model;
+    const { arrow } = graphModel.theme;
+    const { offset, verticalLength } = arrow;
+    const { stroke, strokeWidth } = this.getArrowStyle();
+    return (
+      <marker id={`marker-end-${id}`} refX="-1" overflow="visible" orient="auto" markerUnits="userSpaceOnUse">
+        <path stroke={stroke} fill={stroke} strokeWidth={strokeWidth} transform="rotate(180)" d={`M 0 0 L ${offset} -${verticalLength} L ${offset} ${verticalLength} Z`} />
+      </marker>
     );
   }
   // 起点终点，可以修改起点/终点为其他节点
@@ -100,6 +125,7 @@ export default class BaseEdge extends Component<IProps> {
       </g>
     );
   }
+  getAnimation() { }
   getAppendWidth() {
     return <g />;
   }
@@ -123,6 +149,9 @@ export default class BaseEdge extends Component<IProps> {
     });
   };
   setHoverON = (ev) => {
+    // ! hover多次触发, onMouseOver + onMouseEnter
+    const { model: { isHovered } } = this.props;
+    if (isHovered) return;
     this.handleHover(true, ev);
   };
   setHoverOFF = (ev) => {
@@ -218,23 +247,33 @@ export default class BaseEdge extends Component<IProps> {
     }
   }
   render() {
-    const { model: { isSelected }, graphModel: { editConfigModel } } = this.props;
+    const { model: { isSelected, isHitable }, graphModel } = this.props;
     const isDraging = this.getIsDraging();
-    const { adjustEdgeStartAndEnd } = editConfigModel;
+    const { editConfigModel: { adjustEdgeStartAndEnd }, animation } = graphModel;
+    // performance 只允许出现一条edge有动画
+    const isShowAnimation = isSelected && animation.edge
+      && graphModel.getSelectElements().edges.length === 1;
     return (
-      <g
-        className="lf-edge"
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
-        onContextMenu={this.handleContextMenu}
-        onMouseOver={this.setHoverON}
-        onMouseEnter={this.setHoverON}
-        onMouseLeave={this.setHoverOFF}
-      >
-        {this.getShape()}
-        {this.getAppend()}
-        {this.getText()}
-        {this.getArrow()}
+      <g>
+        <g
+          className={[
+            'lf-edge',
+            !isHitable && 'pointer-none',
+            isSelected && 'lf-edge-selected',
+          ].filter(Boolean).join(' ')}
+          onMouseDown={this.handleMouseDown}
+          onMouseUp={this.handleMouseUp}
+          onContextMenu={this.handleContextMenu}
+          onMouseOver={this.setHoverON}
+          onMouseEnter={this.setHoverON}
+          onMouseLeave={this.setHoverOFF}
+        >
+          {this.getShape()}
+          {this.getAppend()}
+          {isShowAnimation && this.getAnimation()}
+          {this.getText()}
+          {this.getArrow()}
+        </g>
         {(adjustEdgeStartAndEnd && isSelected && !isDraging) ? this.getAdjustPoints() : ''}
       </g>
     );

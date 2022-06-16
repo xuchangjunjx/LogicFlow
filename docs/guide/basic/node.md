@@ -150,6 +150,8 @@ class UserTaskModel extends RectNodeModel {
 }
 ```
 
+
+
 #### 自定义节点的形状属性
 
 在LogicFlow中，形状属性表示节点的宽`width`、高`height`，矩形的圆角`radius`, 圆形的半径`r`, 多边形的顶点`points`等这些控制着节点最终形状的属性。因为LogicFlow在计算节点的锚点、连线的起点终点的时候，会基于形状属性进行计算。对于形状属性的自定义，需要在`setAttributes`方法或`initNodeData`方法中进行。
@@ -210,6 +212,9 @@ class UserTaskModel extends RectNodeModel {
 }
 ```
 
+::: tip 提示
+如果不了解为什么`this.properties`打印出来是一个Proxy对象, 无法看到属性。请查看issue [https://github.com/didi/LogicFlow/issues/530](https://github.com/didi/LogicFlow/issues/530)
+:::
 ### 步骤3: 自定义节点view
 
 LogicFlow在自定义节点的`model`时,可以定义节点的基础形状、样式等属性。但是当开发者需要一个更加复杂的节点时，可以使用LogicFlow提供的自定义节点`view`的方式。
@@ -312,7 +317,7 @@ h("rect", {
   ...style,
   x: x - width / 2, 
   y: y - height / 2,
-  rx: radius,
+  rx: radius, // 注意这里是rx而不是radius
   ry: radius,
   width,
   height
@@ -357,6 +362,10 @@ h("polygon", {
   points: pointStr, // 
 })
 ```
+
+::: tip 自定义矩形的view时radius设置
+在`model`中，`radius`是矩形节点的形状属性。但是在自定义`view`时需要注意，svg里面设置矩形的圆角并不是用`radius`，而是使用[rx](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/rx), ry。所以在自定义`view`的矩形时，需要将model中`radius`的赋值给`rx`和`ry`，否则圆角将不生效。
+:::
 
 #### props
 
@@ -416,12 +425,6 @@ class SquareModel extends RectNodeModel {
 
 ```
 
-<!-- <example
-  :height="400"
-  iframeId="iframe-3"
-  href="/examples/#/advance/custom-node/rule"
-/> -->
-
 在上例中，我们为`model`的`sourceRules`属性添加了一条校验规则，校验规则是一个对象，我们需要为其提供`messgage`和`validate`属性。
 
 `message`属性是当不满足校验规则时所抛出的错误信息，`validate`则是传入规则检验的回调函数。`validate`方法有两个参数，分别为边的起始节点（source）和目标节点（target），我们可以根据参数信息来决定是否通过校验，其返回值是一个布尔值。
@@ -435,6 +438,17 @@ lf.on('connection:not-allowed', (msg) => {
   console.log(msg)
 });
 ```
+
+**设置不同状态下节点的样式**
+
+在节点model中，有个state属性，当节点连接规则校验不通过时，state属性值为5。我们可以通过这个属性来实现连线是节点的提示效果。
+
+<iframe src="https://codesandbox.io/embed/long-star-d4j86e?fontsize=14&hidenavigation=1&theme=dark&view=preview"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="logicflow-vue-rules"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+   ></iframe>
 
 ## 限制节点移动
 
@@ -498,7 +512,7 @@ class SquareModel extends RectNodeModel {
     this.sourceRules.push(rule);
   }
   getAnchorStyle(anchorInfo) {
-    const style = super.getAnchorStyle();
+    const style = super.getAnchorStyle(anchorInfo);
     if (anchorInfo.type === 'left') {
       style.fill = 'red'
       style.hover.fill = 'transparent'

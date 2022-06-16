@@ -12,11 +12,13 @@ import {
   EdgeData,
   MenuConfig,
   EdgeConfig,
+  ShapeStyleAttribute,
 } from '../../type/index';
 import {
   ModelType, ElementType, OverlapMode,
 } from '../../constant/constant';
 import { OutlineTheme } from '../../constant/DefaultTheme';
+import { defaultAnimationData } from '../../constant/DefaultAnimation';
 import { formatData } from '../../util/compatible';
 import { pickEdgeConfig, twoPointDistance } from '../../util/edge';
 import { getZIndex } from '../../util/zIndex';
@@ -45,6 +47,7 @@ class BaseEdgeModel implements IBaseModel {
   @observable isHitable = true; // 细粒度控制边是否对用户操作进行反应
   @observable draggable = true;
   @observable visible = true;
+  @observable isAnimation = false;
   // 引用属性
   graphModel: GraphModel;
   @observable zIndex = 0;
@@ -56,6 +59,12 @@ class BaseEdgeModel implements IBaseModel {
   targetAnchorId = '';
   menu?: MenuConfig[];
   customTextPosition = false; // 是否自定义边文本位置
+  animationData = defaultAnimationData;
+  @observable style: ShapeStyleAttribute = { }; // 每条边自己的样式，动态修改
+  @observable arrowConfig = {
+    markerEnd: `url(#marker-end-${this.id})`,
+    markerStart: '',
+  }; // 箭头属性
   [propName: string]: any; // 支持自定义
 
   constructor(data: EdgeConfig, graphModel: GraphModel) {
@@ -115,8 +124,10 @@ class BaseEdgeModel implements IBaseModel {
    * @returns 自定义边样式
    */
   getEdgeStyle() {
-    const { baseEdge } = this.graphModel.theme;
-    return cloneDeep(baseEdge);
+    return {
+      ...this.graphModel.theme.baseEdge,
+      ...this.style,
+    };
   }
   /**
    * @overridable 支持重写
@@ -126,6 +137,24 @@ class BaseEdgeModel implements IBaseModel {
     // 透传 edgeText
     const { edgeText } = this.graphModel.theme;
     return cloneDeep(edgeText);
+  }
+  /**
+   * @overridable 支持重写
+   * 获取当前边的动画样式
+   * @returns 自定义边动画样式
+   */
+  getAnimation() {
+    const { animationData } = this;
+    return cloneDeep(animationData);
+  }
+  /**
+   * @overridable 支持重写
+   * 获取当前边的动画样式
+   * @returns 自定义边动画样式
+   */
+  getEdgeAnimationStyle() {
+    const { edgeAnimation } = this.graphModel.theme;
+    return cloneDeep(edgeAnimation);
   }
   /**
    * @overridable 支持重写
@@ -228,7 +257,14 @@ class BaseEdgeModel implements IBaseModel {
     }
     return data;
   }
-
+  /**
+   * 用于在历史记录时获取节点数据，
+   * 在某些情况下，如果希望某个属性变化不引起history的变化，
+   * 可以重写此方法。
+   */
+  getHistoryData(): EdgeData {
+    return this.getData();
+  }
   @action
   setProperty(key, val): void {
     this.properties[key] = formatData(val);
@@ -243,6 +279,31 @@ class BaseEdgeModel implements IBaseModel {
     };
     this.setAttributes();
   }
+
+  // 设置样式
+  @action
+  setStyle(key, val): void {
+    this.style = {
+      ...this.style,
+      [key]: formatData(val),
+    };
+  }
+
+  @action
+  setStyles(styles): void {
+    this.style = {
+      ...this.style,
+      ...formatData(styles),
+    };
+  }
+
+  @action
+  updateStyles(styles): void {
+    this.style = {
+      ...formatData(styles),
+    };
+  }
+
   /**
    * 内部方法，处理初始化文本格式
    */
@@ -317,17 +378,33 @@ class BaseEdgeModel implements IBaseModel {
     };
   }
   /**
-   * 内部方法，计算边的起点和终点
+   * 内部方法，计算边的起点和终点和其对于的锚点Id
    */
   @action
   setAnchors(): void {
-    if (!this.startPoint) {
-      const position = this.getBeginAnchor(this.sourceNode, this.targetNode);
-      this.startPoint = position;
+    if (!this.sourceAnchorId || !this.startPoint) {
+      const anchor = this.getBeginAnchor(this.sourceNode, this.targetNode);
+      if (!this.startPoint) {
+        this.startPoint = {
+          x: anchor.x,
+          y: anchor.y,
+        };
+      }
+      if (!this.sourceAnchorId) {
+        this.sourceAnchorId = anchor.id;
+      }
     }
-    if (!this.endPoint) {
-      const position = this.getEndAnchor(this.targetNode);
-      this.endPoint = position;
+    if (!this.targetAnchorId || !this.endPoint) {
+      const anchor = this.getEndAnchor(this.targetNode);
+      if (!this.endPoint) {
+        this.endPoint = {
+          x: anchor.x,
+          y: anchor.y,
+        };
+      }
+      if (!this.targetAnchorId) {
+        this.targetAnchorId = anchor.id;
+      }
     }
   }
 
@@ -347,6 +424,16 @@ class BaseEdgeModel implements IBaseModel {
   }
 
   @action
+  openEdgeAnimation(): void {
+    this.isAnimation = true;
+  }
+
+  @action
+  closeEdgeAnimation(): void {
+    this.isAnimation = false;
+  }
+
+  @action
   setElementState(state: number, additionStateData?: AdditionData): void {
     this.state = state;
     this.additionStateData = additionStateData;
@@ -358,8 +445,20 @@ class BaseEdgeModel implements IBaseModel {
   }
 
   @action
+  moveStartPoint(deltaX, deltaY): void {
+    this.startPoint.x += deltaX;
+    this.startPoint.y += deltaY;
+  }
+
+  @action
   updateEndPoint(anchor): void {
     this.endPoint = anchor;
+  }
+
+  @action
+  moveEndPoint(deltaX, deltaY): void {
+    this.endPoint.x += deltaX;
+    this.endPoint.y += deltaY;
   }
 
   @action

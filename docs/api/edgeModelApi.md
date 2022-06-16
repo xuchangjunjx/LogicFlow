@@ -75,6 +75,20 @@ class SequenceFlowModel extends PolylineModel {
 }
 ```
 
+## getAnimation
+
+支持重写，自定义边的流向动画
+
+```js
+class CustomBezierModel extends BezierEdgeModel {
+  getAnimation() {
+    const animation = super.getAnimation();
+    animation.stroke = 'blue';
+    return animation;
+  }
+}
+```
+
 ## getTextStyle
 
 支持重写，自定义边文本样式属性，默认为[主题 edgeText](/api/themeApi.html#edgetext)
@@ -176,29 +190,6 @@ edgeModel.setProperties({
   // 自定义properties
 })
 
-```
-
-## setText
-
-设置边文本属性
-
-| 名称 | 类型 | 必传 | 描述 |
-| :- | :- | :- | :- |
-| value | string | - |  文本值 |
-| x | number | - | 边文本x坐标 |
-| y | number | - | 边文本y坐标 |
-| draggable | boolean | - | 文本是否可以拖动 |
-| editable | boolean | - | 文本是否可以编辑 |
-
-```js
-const edgeModel = lf.getEdgeModelById('edge_1');
-edgeModel.setText({
-  value: '',
-  x: 0,
-  y: 0,
-  draggable: false,
-  editable: true,
-})
 ```
 
 ## updateText

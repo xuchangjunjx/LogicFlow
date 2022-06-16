@@ -80,12 +80,39 @@ export default class PolylineEdge extends BaseEdge {
   getIsDraging = () => this.isDraging;
   getEdge() {
     const { model } = this.props;
+    const { points, isAnimation, arrowConfig } = model;
     const style = model.getEdgeStyle();
+    const animationStyle = model.getEdgeAnimationStyle();
+    const {
+      strokeDasharray,
+      stroke,
+      strokeDashoffset,
+      animationName,
+      animationDuration,
+      animationIterationCount,
+      animationTimingFunction,
+      animationDirection,
+    } = animationStyle;
     return (
       <Polyline
-        points={model.points}
+        points={points}
         {
           ...style
+        }
+        {...arrowConfig}
+        {
+          ...isAnimation ? {
+            strokeDasharray,
+            stroke,
+            style: {
+              strokeDashoffset,
+              animationName,
+              animationDuration,
+              animationIterationCount,
+              animationTimingFunction,
+              animationDirection,
+            },
+          } : {}
         }
       />
     );
@@ -94,6 +121,24 @@ export default class PolylineEdge extends BaseEdge {
     return (
       <g>
         {this.getEdge()}
+      </g>
+    );
+  }
+  getAnimation() {
+    const { model } = this.props;
+    const { stroke, className, strokeDasharray } = model.getAnimation();
+    const style = model.getEdgeStyle();
+    return (
+      <g>
+        <Polyline
+          points={model.points}
+          {
+            ...style
+          }
+          className={className}
+          strokeDasharray={strokeDasharray}
+          stroke={stroke}
+        />
       </g>
     );
   }

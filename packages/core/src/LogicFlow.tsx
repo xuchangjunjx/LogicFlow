@@ -243,6 +243,15 @@ export default class LogicFlow {
     this.setView(config.type, vClass);
     this.graphModel.setModel(config.type, config.model);
   }
+  /**
+   * 批量注册
+   * @param elements 注册的元素
+   */
+  batchRegister(elements = []) {
+    elements.forEach((element) => {
+      this.registerElement(element);
+    });
+  }
   private defaultRegister() {
     // register default shape
     this.registerElement({
@@ -704,8 +713,13 @@ export default class LogicFlow {
    * @param leftTopPoint 区域左上角坐标, dom层坐标
    * @param rightBottomPoint 区域右下角坐标，dom层坐标
    */
-  getAreaElement(leftTopPoint: PointTuple, rightBottomPoint: PointTuple) {
-    return this.graphModel.getAreaElement(leftTopPoint, rightBottomPoint)
+  getAreaElement(
+    leftTopPoint: PointTuple,
+    rightBottomPoint: PointTuple,
+    wholeEdge = true,
+    wholeNode = true,
+  ) {
+    return this.graphModel.getAreaElement(leftTopPoint, rightBottomPoint, wholeEdge, wholeNode)
       .map(element => element.getData());
   }
   /**
@@ -867,6 +881,39 @@ export default class LogicFlow {
     this.translate(-TRANSLATE_X, -TRANSLATE_Y);
   }
 
+  /**
+   * 图形画布居中显示
+   */
+  translateCenter(): void {
+    this.graphModel.translateCenter();
+  }
+
+  /**
+   * 图形适应屏幕大小
+   * @param verticalOffset number 距离盒子上下的距离， 默认为20
+   * @param horizontalOffset number 距离盒子左右的距离， 默认为20
+   */
+  fitView(verticalOffset?: number, horizontalOffset?: number): void {
+    if (horizontalOffset === undefined) {
+      horizontalOffset = verticalOffset; // 兼容以前的只传一个参数的情况
+    }
+    this.graphModel.fitView(verticalOffset, horizontalOffset);
+  }
+  /**
+   * 开启边的动画
+   * @param edgeId any
+   */
+  openEdgeAnimation(edgeId: any): void {
+    this.graphModel.openEdgeAnimation(edgeId);
+  }
+  /**
+   * 关闭边的动画
+   * @param edgeId any
+   */
+  closeEdgeAnimation(edgeId: any): void {
+    this.graphModel.closeEdgeAnimation(edgeId);
+  }
+
   // 事件系统----------------------------------------------
   /**
    * 监听事件
@@ -1004,11 +1051,23 @@ export default class LogicFlow {
   setView(type: string, component) {
     this.viewMap.set(type, component);
   }
-  /**
-   * 内部保留方法
-   * 获取指定类型的view
-   */
-  getView = (type: string) => this.viewMap.get(type);
+  renderRawData(graphRawData) {
+    this.graphModel.graphDataToModel(formatData(graphRawData));
+    if (!this.options.isSilentMode && this.options.history !== false) {
+      this.history.watch(this.graphModel);
+    }
+    render((
+      <Graph
+        getView={this.getView}
+        tool={this.tool}
+        options={this.options}
+        dnd={this.dnd}
+        snaplineModel={this.snaplineModel}
+        graphModel={this.graphModel}
+      />
+    ), this.container);
+    this.emit(EventType.GRAPH_RENDERED, this.graphModel.modelToGraphData());
+  }
   /**
    * 渲染图
    * @example
@@ -1041,20 +1100,11 @@ export default class LogicFlow {
     if (this.adapterIn) {
       graphData = this.adapterIn(graphData);
     }
-    this.graphModel.graphDataToModel(formatData(graphData));
-    if (!this.options.isSilentMode && this.options.history !== false) {
-      this.history.watch(this.graphModel);
-    }
-    render((
-      <Graph
-        getView={this.getView}
-        tool={this.tool}
-        options={this.options}
-        dnd={this.dnd}
-        snaplineModel={this.snaplineModel}
-        graphModel={this.graphModel}
-      />
-    ), this.container);
-    this.emit(EventType.GRAPH_RENDERED, this.graphModel.modelToGraphData());
+    this.renderRawData(graphData);
   }
+  /**
+   * 内部保留方法
+   * 获取指定类型的view
+   */
+  getView = (type: string) => this.viewMap.get(type);
 }

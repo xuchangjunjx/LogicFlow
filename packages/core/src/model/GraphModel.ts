@@ -9,7 +9,14 @@ import {
   ElementState, ModelType, EventType, ElementMaxzIndex, ElementType, OverlapMode,
 } from '../constant/constant';
 import {
-  AdditionData, Point, NodeConfig, EdgeConfig, PointTuple, NodeMoveRule, GraphConfigData,
+  AdditionData,
+  Point,
+  NodeConfig,
+  EdgeConfig,
+  PointTuple,
+  NodeMoveRule,
+  GraphConfigData,
+  VirtualRectSize,
 } from '../type';
 import { updateTheme } from '../util/theme';
 import EventEmitter from '../event/eventEmitter';
@@ -22,6 +29,8 @@ import { createUuid } from '../util';
 import { getMinIndex, getZIndex } from '../util/zIndex';
 import { Theme } from '../constant/DefaultTheme';
 import { Definition } from '../options';
+import { AnimationConfig } from '../constant/DefaultAnimation';
+import { updateAnimation } from '../util/animation';
 
 type BaseNodeModelId = string; // 节点ID
 type BaseEdgeModelId = string; // 边ID
@@ -63,6 +72,10 @@ class GraphModel {
    * 用于在默认模式下将之前的顶部元素恢复初始高度。
    */
   topElement: BaseNodeModel | BaseEdgeModel;
+  /**
+   * 控制是否开启动画
+   */
+  animation: AnimationConfig;
   /**
    * 自定义全局id生成器
    * @see todo docs link
@@ -121,14 +134,14 @@ class GraphModel {
    * 外部拖动节点进入画布的过程中，用fakerNode来和画布上正是的节点区分开
    */
   @observable fakerNode: BaseNodeModel;
+  [key: string]: any; // 允许在groupModel上扩展属性
   constructor(options: Definition) {
     const {
       container,
       background = {},
       grid,
-      width,
-      height,
       idGenerator,
+      animation,
     } = options;
     this.background = background;
     if (typeof grid === 'object') {
@@ -140,8 +153,15 @@ class GraphModel {
     this.transformModel = new TransfromModel(this.eventCenter);
     this.theme = updateTheme(options.style);
     this.edgeType = options.edgeType || 'polyline';
-    this.width = width ?? container.getBoundingClientRect().width;
-    this.height = height ?? container.getBoundingClientRect().height;
+    if (!options.width) {
+      options.width = container.getBoundingClientRect().width;
+    }
+    if (!options.height) {
+      options.height = container.getBoundingClientRect().height;
+    }
+    this.width = options.width;
+    this.height = options.height;
+    this.animation = updateAnimation(animation);
     this.partial = options.partial;
     this.overlapMode = options.overlapMode || 0;
     this.idGenerator = idGenerator;
@@ -173,7 +193,7 @@ class GraphModel {
     this.nodes.forEach(node => elements.push(node));
     this.edges.forEach(edge => elements.push(edge));
     elements = elements.sort((a, b) => a.zIndex - b.zIndex);
-    // 只显示可见区域的节点和边以及和这个可以区域节点的节点
+    // 只显示可见区域的节点和边
     const showElements = [];
     let topElementIdx = -1;
     // todo: 缓存, 优化计算效率
@@ -183,7 +203,10 @@ class GraphModel {
       const currentItem = elements[i];
       // 如果节点不在可见区域，且不是全元素显示模式，则隐藏节点。
       if (currentItem.visible
-        && (!this.partial || this.isElementInArea(currentItem, visibleLt, visibleRb, false))
+        && (!this.partial
+          || currentItem.isSelected
+          || this.isElementInArea(currentItem, visibleLt, visibleRb, false, false)
+        )
       ) {
         if (currentItem.zIndex === ElementMaxzIndex) {
           topElementIdx = showElements.length;
@@ -225,15 +248,24 @@ class GraphModel {
   }
   /**
    * 获取指定区域内的所有元素
+   * @param leftTopPoint 表示区域左上角的点
+   * @param rightBottomPoint 表示区域右下角的点
+   * @param wholeEdge 是否要整个边都在区域内部
+   * @param wholeNode 是否要整个节点都在区域内部
    */
-  getAreaElement(leftTopPoint: PointTuple, rightBottomPoint: PointTuple) {
+  getAreaElement(
+    leftTopPoint: PointTuple,
+    rightBottomPoint: PointTuple,
+    wholeEdge = true,
+    wholeNode = true,
+  ) {
     const areaElements = [];
     const elements = [];
     this.nodes.forEach(node => elements.push(node));
     this.edges.forEach(edge => elements.push(edge));
     for (let i = 0; i < elements.length; i++) {
       const currentItem = elements[i];
-      if (this.isElementInArea(currentItem, leftTopPoint, rightBottomPoint)) {
+      if (this.isElementInArea(currentItem, leftTopPoint, rightBottomPoint, wholeEdge, wholeNode)) {
         areaElements.push(currentItem);
       }
     }
@@ -281,8 +313,10 @@ class GraphModel {
    * @param element 节点或者边
    * @param lt 左上角点
    * @param rb 右下角点
+   * @param wholeEdge 边的起点和终点都在区域内才算
+   * @param wholeNode 节点的box都在区域内才算
    */
-  isElementInArea(element, lt: PointTuple, rb: PointTuple, wholeEdge = true) {
+  isElementInArea(element, lt: PointTuple, rb: PointTuple, wholeEdge = true, wholeNode = true) {
     if (element.BaseType === ElementType.NODE) {
       element = element as BaseNodeModel;
       // 节点是否在选区内，判断逻辑为如果节点的bbox的四个角上的点都在选区内，则判断节点在选区内
@@ -293,12 +327,12 @@ class GraphModel {
         { x: maxX, y: maxY },
         { x: minX, y: maxY },
       ];
-      let inArea = true;
+      let inArea = wholeNode;
       for (let i = 0; i < bboxPointsList.length; i++) {
         let { x, y } = bboxPointsList[i];
         [x, y] = this.transformModel.CanvasPointToHtmlPoint([x, y]);
-        if (!isPointInArea([x, y], lt, rb)) {
-          inArea = false;
+        if (isPointInArea([x, y], lt, rb) !== wholeNode) {
+          inArea = !wholeNode;
           break;
         }
       }
@@ -378,7 +412,7 @@ class GraphModel {
         nodeDraging = true;
         break;
       } else {
-        nodes.push(nodeMode.getData());
+        nodes.push(nodeMode.getHistoryData());
       }
     }
     if (nodeDraging) {
@@ -393,7 +427,7 @@ class GraphModel {
         edgeDraging = true;
         break;
       } else {
-        edges.push(edgeMode.getData());
+        edges.push(edgeMode.getHistoryData());
       }
     }
     if (edgeDraging) {
@@ -735,16 +769,18 @@ class GraphModel {
       const nodeAsSource = this.edges[i].sourceNodeId === nodeId;
       const nodeAsTarget = this.edges[i].targetNodeId === nodeId;
       if (nodeAsSource) {
-        edgeModel.updateStartPoint({
-          x: edgeModel.startPoint.x + deltaX,
-          y: edgeModel.startPoint.y + deltaY,
-        });
+        // edgeModel.updateStartPoint({
+        //   x: edgeModel.startPoint.x + deltaX,
+        //   y: edgeModel.startPoint.y + deltaY,
+        // });
+        edgeModel.moveStartPoint(deltaX, deltaY);
       }
       if (nodeAsTarget) {
-        edgeModel.updateEndPoint({
-          x: edgeModel.endPoint.x + deltaX,
-          y: edgeModel.endPoint.y + deltaY,
-        });
+        // edgeModel.updateEndPoint({
+        //   x: edgeModel.endPoint.x + deltaX,
+        //   y: edgeModel.endPoint.y + deltaY,
+        // });
+        edgeModel.moveEndPoint(deltaX, deltaY);
       }
       // 如果有文案了，当节点移动引起文案位置修改时，找出当前文案位置与最新边距离最短距离的点
       // 最大程度保持节点位置不变且在边上
@@ -1090,6 +1126,117 @@ class GraphModel {
   @action clearData(): void {
     this.nodes = [];
     this.edges = [];
+  }
+
+  /**
+   * 获取图形区域虚拟矩型的尺寸和中心坐标
+   * @returns
+   */
+  getVirtualRectSize(): VirtualRectSize {
+    const { nodes } = this;
+    let nodesX = [];
+    let nodesY = [];
+    // 获取所有节点组成的x，y轴最大最小值，这里考虑了图形的长宽和边框
+    nodes.forEach((node) => {
+      const { x, y, width, height } = node;
+      const { strokeWidth = 0 } = node.getNodeStyle();
+      nodesX = nodesX.concat([x + width / 2 + strokeWidth, x - width / 2 - strokeWidth]);
+      nodesY = nodesY.concat([y + height / 2 + strokeWidth, y - height / 2 - strokeWidth]);
+    });
+
+    const minX = Math.min(...nodesX);
+    const maxX = Math.max(...nodesX);
+    const minY = Math.min(...nodesY);
+    const maxY = Math.max(...nodesY);
+
+    const virtualRectWidth = (maxX - minX) || 0;
+    const virtualRectHeight = (maxY - minY) || 0;
+
+    // 获取虚拟矩型的中心坐标
+    const virtualRectCenterPositionX = minX + virtualRectWidth / 2;
+    const virtualRectCenterPositionY = minY + virtualRectHeight / 2;
+
+    return {
+      virtualRectWidth,
+      virtualRectHeight,
+      virtualRectCenterPositionX,
+      virtualRectCenterPositionY,
+    };
+  }
+  /**
+   * 将图形整体移动到画布中心
+   */
+  @action translateCenter(): void {
+    const { nodes, width, height, rootEl, transformModel } = this;
+    if (!nodes.length) { return; }
+
+    const containerWidth = width || rootEl.clientWidth;
+    const containerHeight = height || rootEl.clientHeight;
+
+    const {
+      virtualRectCenterPositionX,
+      virtualRectCenterPositionY,
+    } = this.getVirtualRectSize();
+
+    // 将虚拟矩型移动到画布中心
+    transformModel.focusOn(
+      virtualRectCenterPositionX,
+      virtualRectCenterPositionY,
+      containerWidth,
+      containerHeight,
+    );
+  }
+
+  /**
+   * 画布图形适应屏幕大小
+   * @param verticalOffset number 距离盒子上下的距离， 默认为20
+   * @param horizontalOffset number 距离盒子左右的距离， 默认为20
+   */
+  @action fitView(verticalOffset = 20, horizontalOffset = 20): void {
+    const { nodes, width, height, rootEl, transformModel } = this;
+    if (!nodes.length) { return; }
+    const containerWidth = width || rootEl.clientWidth;
+    const containerHeight = height || rootEl.clientHeight;
+
+    const {
+      virtualRectWidth,
+      virtualRectHeight,
+      virtualRectCenterPositionX,
+      virtualRectCenterPositionY,
+    } = this.getVirtualRectSize();
+
+    const zoomRatioX = (virtualRectWidth + horizontalOffset) / containerWidth;
+    const zoomRatioY = (virtualRectHeight + verticalOffset) / containerHeight;
+
+    let zoomRatio = 0;
+    zoomRatio = 1 / Math.max(zoomRatioX, zoomRatioY);
+
+    const point: PointTuple = [containerWidth / 2, containerHeight / 2];
+    // 适应画布大小
+    transformModel.zoom(zoomRatio, point);
+    // 将虚拟矩型移动到画布中心
+    transformModel.focusOn(
+      virtualRectCenterPositionX,
+      virtualRectCenterPositionY,
+      containerWidth,
+      containerHeight,
+    );
+  }
+  /**
+   * 开启边的动画
+   * @param edgeId any
+   */
+  @action openEdgeAnimation(edgeId: any): void {
+    const edgeModel = this.getEdgeModelById(edgeId);
+    edgeModel.openEdgeAnimation();
+  }
+  /**
+   * 关闭边的动画
+   * @param edgeId any
+   */
+  @action closeEdgeAnimation(edgeId: any): void {
+    const edgeModel = this.getEdgeModelById(edgeId);
+    edgeModel.closeEdgeAnimation();
   }
 }
 

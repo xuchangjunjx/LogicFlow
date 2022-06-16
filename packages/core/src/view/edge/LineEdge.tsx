@@ -7,8 +7,19 @@ import { getAppendAttributes } from '../../util/edge';
 export default class LineEdge extends BaseEdge {
   getEdge() {
     const { model } = this.props;
-    const { startPoint, endPoint } = model;
+    const { startPoint, endPoint, isAnimation, arrowConfig } = model;
     const style = model.getEdgeStyle();
+    const animationStyle = model.getEdgeAnimationStyle();
+    const {
+      strokeDasharray,
+      stroke,
+      strokeDashoffset,
+      animationName,
+      animationDuration,
+      animationIterationCount,
+      animationTimingFunction,
+      animationDirection,
+    } = animationStyle;
     return (
       <Line
         {
@@ -18,6 +29,21 @@ export default class LineEdge extends BaseEdge {
         y1={startPoint.y}
         x2={endPoint.x}
         y2={endPoint.y}
+        {...arrowConfig}
+        {
+          ...isAnimation ? {
+            strokeDasharray,
+            stroke,
+            style: {
+              strokeDashoffset,
+              animationName,
+              animationDuration,
+              animationIterationCount,
+              animationTimingFunction,
+              animationDirection,
+            },
+          } : {}
+        }
       />
     );
   }
@@ -25,6 +51,28 @@ export default class LineEdge extends BaseEdge {
     return (
       <g>
         { this.getEdge() }
+      </g>
+    );
+  }
+  getAnimation() {
+    const { model } = this.props;
+    const { stroke, className, strokeDasharray } = model.getAnimation();
+    const { startPoint, endPoint } = model;
+    const style = model.getEdgeStyle();
+    return (
+      <g>
+        <Line
+          {
+            ...style
+          }
+          x1={startPoint.x}
+          y1={startPoint.y}
+          x2={endPoint.x}
+          y2={endPoint.y}
+          className={className}
+          strokeDasharray={strokeDasharray}
+          stroke={stroke}
+        />
       </g>
     );
   }

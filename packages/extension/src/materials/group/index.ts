@@ -27,7 +27,7 @@ class Group {
       const groupModel = lf.getNodeModelById(this.nodeGroupMap.get(model.id));
       if (groupModel && groupModel.isRestrict) { // 如果移动的节点存在分组中，且这个分组禁止子节点移出去。
         const { x1, y1, x2, y2 } = model.getBounds();
-        const r = groupModel.isInRange({
+        const r = groupModel.isAllowMoveTo({
           x1: x1 + deltaX,
           y1: y1 + deltaY,
           x2: x2 + deltaX,
@@ -38,7 +38,9 @@ class Group {
 
       return true;
     });
+    lf.graphModel.group = this;
     lf.on('node:add', this.appendNodeToGrop);
+    lf.on('node:delete', this.deleteGroupChild);
     lf.on('node:drop', this.appendNodeToGrop);
     lf.on('node:dnd-drag', this.setActiveGroup);
     lf.on('node:drag', this.setActiveGroup);
@@ -68,10 +70,24 @@ class Group {
     // 然后再判断这个节点是否在某个group中，如果在，则将其添加到对应的group中
     const bounds = this.lf.getNodeModelById(data.id).getBounds();
     const group = this.getGroup(bounds);
-    if (group && data.id !== group.id) {
+    if (!group) return;
+    if (data.id !== group.id) {
       group.addChild(data.id);
       this.nodeGroupMap.set(data.id, group.id);
       group.setAllowAppendChild(false);
+    } else if (data.children && data.children.length > 0) {
+      // 表示当前添加的节点是一个新增的group
+      data.children.forEach((nodeId) => {
+        this.nodeGroupMap.set(nodeId, data.id);
+      });
+    }
+  };
+  deleteGroupChild = ({ data }) => {
+    const groupId = this.nodeGroupMap.get(data.id);
+    if (groupId) {
+      const group = this.lf.getNodeModelById(groupId);
+      group.removeChild(data.id);
+      this.nodeGroupMap.delete(data.id);
     }
   };
   setActiveGroup = ({ data }) => {
@@ -89,14 +105,6 @@ class Group {
       }
     }
   };
-  getGroups() {
-    const groups = [];
-    this.lf.graphModel.nodes.forEach((nodeModel) => {
-      if (nodeModel.isGroup) {
-        groups.push(nodeModel);
-      }
-    });
-  }
   /**
    * 获取自定位置其所属分组
    */
@@ -107,6 +115,15 @@ class Group {
       if (model.isGroup && model.isInRange(bounds)) {
         return model;
       }
+    }
+  }
+  /**
+   * 获取某个节点所属的groupModel
+   */
+  getNodeGroup(nodeId) {
+    const groupId = this.nodeGroupMap.get(nodeId);
+    if (groupId) {
+      return this.lf.getNodeModelById(groupId);
     }
   }
 }

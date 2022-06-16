@@ -12,8 +12,19 @@ const lf = new LogicFlow({
   container: document.querySelector('#container'),
   adjustEdgeStartAndEnd: true,
   width: 1000,
-  grid: true,
-  height: 400,
+  grid: false,
+  height: 600,
+  background: {
+    // filter: 'grayscale(100%)'
+    backgroundImage: 'url(https://cdn.jsdelivr.net/gh/towersxu/cdn@latest/knowledge/animal/horse.png)',
+    /* 加入模糊 */
+    filter: 'blur(5px)',
+    // ['-webkit-backdrop-filter']: 'blur(5px)'
+    // backgroundColor: 'red'
+    // background: '-webkit-gradient(linear,0 0,0 100%,from(#f00),to(#0000FF))';
+    // background: -moz-gradient(linear,0 0,0 100%,from(#f00),to(#0000FF));     
+    // background:-webkit-gradient(linear,left top,left bottom,from(#f00),to(#00f)); 
+  }
   // hoverOutline: false
 })
 
@@ -101,6 +112,30 @@ lf.render({
   ]
 });
 
+lf.on('anchor:dragstart', ({ data, nodeModel }) => {
+  if (nodeModel.type === 'hexagonNode') {
+    lf.graphModel.nodes.forEach(node => {
+      if (node.type === 'customCircle') {
+        node.setProperties({
+          isConnectable: true
+        })
+      }
+    });
+  }
+})
+
+lf.on('anchor:drop', ({ data, nodeModel }) => {
+  if (nodeModel.type === 'hexagonNode') {
+    lf.graphModel.nodes.forEach(node => {
+      if (node.type === 'customCircle') {
+        node.setProperties({
+          isConnectable: false
+        })
+      }
+    });
+  }
+})
+
 document.querySelector('#select_js').addEventListener('click', () => {
   lf.setProperties('custom-111', {
     isSelected: true
@@ -108,5 +143,13 @@ document.querySelector('#select_js').addEventListener('click', () => {
 })
 
 document.querySelector('#get_data').addEventListener('click', () => {
-  console.log(lf.graphModel)
+  console.log(lf.getGraphData())
+})
+
+document.body.addEventListener('mousedown', () => {
+  console.log('body mouse down')
+})
+
+document.body.addEventListener('click', () => {
+  console.log('body mouse click')
 })

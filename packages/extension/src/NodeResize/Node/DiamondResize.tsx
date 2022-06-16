@@ -14,10 +14,22 @@ interface IProps {
   edgeStyle?: CSSStyleDeclaration,
 }
 class DiamondResizeModel extends DiamondNodeModel {
-  minWidth = 30;
-  minHeight = 30;
-  maxWidth = 2000;
-  maxHeight = 2000;
+  constructor(data, graphModel) {
+    super(data, graphModel);
+    const { nodeSize } = this.properties;
+    if (nodeSize) {
+      this.rx = nodeSize.rx;
+      this.ry = nodeSize.ry;
+    }
+  }
+  initNodeData(data: any): void {
+    super.initNodeData(data);
+    this.minWidth = 30;
+    this.minHeight = 30;
+    this.maxWidth = 2000;
+    this.maxHeight = 2000;
+    this.gridSize = 1;
+  }
   getOutlineStyle() {
     const style = super.getOutlineStyle();
     style.stroke = 'none';
@@ -40,14 +52,6 @@ class DiamondResizeModel extends DiamondNodeModel {
       fill: '#FFFFFF',
       stroke: '#000000',
     };
-  }
-  setAttributes() {
-    // @ts-ignore
-    const { nodeSize } = this.properties;
-    if (nodeSize) {
-      this.rx = nodeSize.rx;
-      this.ry = nodeSize.ry;
-    }
   }
 }
 class DiamondResizeView extends DiamondNode {

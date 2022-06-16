@@ -31,6 +31,7 @@ class CanvasOverlay extends Component<IProps, Istate> {
       onDragEnd: this.onDragEnd,
       step: gridSize,
       eventType: 'BLANK',
+      isStopPropagation: false,
       eventCenter,
       model: null,
     });
@@ -100,12 +101,9 @@ class CanvasOverlay extends Component<IProps, Istate> {
     const target = ev.target as HTMLElement;
     if (target.getAttribute('name') === 'canvas-overlay') {
       const { graphModel } = this.props;
-      const { textEditElement, selectElements } = graphModel;
+      const { selectElements } = graphModel;
       if (selectElements.size > 0) {
         graphModel.clearSelectElements();
-      }
-      if (textEditElement) {
-        textEditElement.setElementState(ElementState.DEFAULT);
       }
       graphModel.eventCenter.emit(EventType.BLANK_CLICK, { e: ev });
     }
@@ -134,14 +132,18 @@ class CanvasOverlay extends Component<IProps, Istate> {
         gridSize,
       },
     } = this.props;
-    if (!editConfigModel.stopMoveGraph) {
-      this.stepDrag.setStep(gridSize * SCALE_X);
-      this.stepDrag.handleMouseDown(ev);
-    } else {
-      eventCenter.emit(EventType.BLANK_MOUSEDOWN, { e: ev });
+    const target = ev.target as HTMLElement;
+    const isFrozenElement = !editConfigModel.adjustEdge && !editConfigModel.adjustNodePosition;
+    if (target.getAttribute('name') === 'canvas-overlay' || isFrozenElement) {
+      if (!editConfigModel.stopMoveGraph) {
+        this.stepDrag.setStep(gridSize * SCALE_X);
+        this.stepDrag.handleMouseDown(ev);
+      } else {
+        eventCenter.emit(EventType.BLANK_MOUSEDOWN, { e: ev });
+      }
+      // 为了处理画布移动的时候，编辑和菜单仍然存在的问题。
+      this.clickHandler(ev);
     }
-    // 为了处理画布移动的时候，编辑和菜单仍然存在的问题。
-    this.clickHandler(ev);
   };
   render() {
     const {

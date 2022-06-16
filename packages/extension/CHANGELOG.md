@@ -3,6 +3,232 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.20](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.19...@logicflow/extension@1.1.20) (2022-06-08)
+
+
+### Features
+
+* add highlight plugin ([8081f91](https://github.com/didi/LogicFlow/commit/8081f91c448d4ed204f517a555af59c13bbde55f))
+
+
+
+
+
+## [1.1.19](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.18...@logicflow/extension@1.1.19) (2022-06-01)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.18](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.17...@logicflow/extension@1.1.18) (2022-05-23)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.17](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.16...@logicflow/extension@1.1.17) (2022-05-23)
+
+
+### Bug Fixes
+
+* use blank:drop instead of graph:transform ([c7fc211](https://github.com/didi/LogicFlow/commit/c7fc211438715528651ef4923849a793c325a2c8))
+
+
+
+
+
+## [1.1.16](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.14...@logicflow/extension@1.1.16) (2022-05-18)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.15](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.14...@logicflow/extension@1.1.15) (2022-05-07)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.14](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.13...@logicflow/extension@1.1.14) (2022-04-22)
+
+
+### Bug Fixes
+
+* update turbo adapter ([205e6c8](https://github.com/didi/LogicFlow/commit/205e6c8e7cb8809ad1f04ec6b8c92b5d25416257))
+
+
+
+
+
+## [1.1.13](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.12...@logicflow/extension@1.1.13) (2022-04-16)
+
+
+### Features
+
+* add useGlobalRules and customCssRules property ([88dadb8](https://github.com/didi/LogicFlow/commit/88dadb8e2c96d9f7ee4d4c286a6aa42c8941baaf))
+
+
+
+
+
+## [1.1.12](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.12-alpha.0...@logicflow/extension@1.1.12) (2022-04-13)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.12-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.11...@logicflow/extension@1.1.12-alpha.0) (2022-04-09)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.11](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.10...@logicflow/extension@1.1.11) (2022-03-29)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.10](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.9...@logicflow/extension@1.1.10) (2022-03-29)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.9](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.9-alpha.1...@logicflow/extension@1.1.9) (2022-03-26)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.9-alpha.1](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.9-alpha.0...@logicflow/extension@1.1.9-alpha.1) (2022-03-26)
+
+
+### Features
+
+* optimize move group children behavior ([d492f20](https://github.com/didi/LogicFlow/commit/d492f20a7205c81a709f7a151b9127a2709d81a4))
+* optimize move node behavior ([d0e4e85](https://github.com/didi/LogicFlow/commit/d0e4e856cf58e92a98e309cdd698724bc1163295))
+
+
+
+
+
+## [1.1.9-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.8-alpha.0...@logicflow/extension@1.1.9-alpha.0) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复新增分组子节点未被记录的问题 ([24d9fc9](https://github.com/didi/LogicFlow/commit/24d9fc9d056f34141520da4a3f9482fe031ec325))
+
+
+
+
+
+## [1.1.8](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.8-alpha.0...@logicflow/extension@1.1.8) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复新增分组子节点未被记录的问题 ([24d9fc9](https://github.com/didi/LogicFlow/commit/24d9fc9d056f34141520da4a3f9482fe031ec325))
+
+
+
+
+
+## [1.1.8-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.7-alpha.0...@logicflow/extension@1.1.8-alpha.0) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复了`group`插件在多个`group`节点一起被折叠报错的问题。 ([396736e](https://github.com/didi/LogicFlow/commit/396736e07c320985f7c779b272085ba1f66f1083))
+* group undo cannot fold ([5860d7e](https://github.com/didi/LogicFlow/commit/5860d7ef4770f655fab1bb5ee6114dc63757b725))
+* node resize can`t set shape attributes ([9811e93](https://github.com/didi/LogicFlow/commit/9811e931adcab3e9c4ec5836e40d5ca766eb04e4))
+
+
+### Features
+
+* add node resize maxwidth and maxheight ([e98f575](https://github.com/didi/LogicFlow/commit/e98f575d19c5c7c9a74c7ad3302c1a8cb02bd5e3))
+* optimize drag node behavior ([f88042d](https://github.com/didi/LogicFlow/commit/f88042d5623a0983003bd70098b4e0c12ba60d3d))
+
+
+
+
+
+## [1.1.7](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.7-alpha.0...@logicflow/extension@1.1.7) (2022-03-07)
+
+
+### Bug Fixes
+
+* node resize can`t set shape attributes ([9811e93](https://github.com/didi/LogicFlow/commit/9811e931adcab3e9c4ec5836e40d5ca766eb04e4))
+
+
+
+
+
+## [1.1.7-alpha.1](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.7-alpha.0...@logicflow/extension@1.1.7-alpha.1) (2022-03-04)
+
+
+### Bug Fixes
+
+* node resize can`t set shape attributes ([9811e93](https://github.com/didi/LogicFlow/commit/9811e931adcab3e9c4ec5836e40d5ca766eb04e4))
+
+
+
+
+
+## [1.1.7-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.6...@logicflow/extension@1.1.7-alpha.0) (2022-03-03)
+
+
+### Performance Improvements
+
+* 优化layout trunk ([e261441](https://github.com/didi/LogicFlow/commit/e261441e6b3ab928939bda43101dd5e0348da9f8))
+
+
+
+
+
+## [1.1.6](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.5...@logicflow/extension@1.1.6) (2022-03-02)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.5](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.4...@logicflow/extension@1.1.5) (2022-03-02)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
+## [1.1.4](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.3...@logicflow/extension@1.1.4) (2022-02-23)
+
+**Note:** Version bump only for package @logicflow/extension
+
+
+
+
+
 ## [1.1.3](https://github.com/didi/LogicFlow/compare/@logicflow/extension@1.1.3-alpha.0...@logicflow/extension@1.1.3) (2022-02-18)
 
 **Note:** Version bump only for package @logicflow/extension

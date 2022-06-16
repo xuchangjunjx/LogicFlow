@@ -3,6 +3,295 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.20](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.19...@logicflow/core@1.1.20) (2022-06-08)
+
+
+### Bug Fixes
+
+* edge:mouseenter trigger twice ([2b4e80a](https://github.com/didi/LogicFlow/commit/2b4e80a14ab21b47e7f6d0bc774006b244450a5c))
+* foreignObject support style ([92e37f4](https://github.com/didi/LogicFlow/commit/92e37f403c93b48a612e97c73ffdcf374b5287c8))
+
+
+### Features
+
+* add highlight plugin ([8081f91](https://github.com/didi/LogicFlow/commit/8081f91c448d4ed204f517a555af59c13bbde55f))
+
+
+
+
+
+## [1.1.19](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.18...@logicflow/core@1.1.19) (2022-06-01)
+
+
+### Features
+
+* arrow marker, fixes [#637](https://github.com/didi/LogicFlow/issues/637) ([98720b9](https://github.com/didi/LogicFlow/commit/98720b944fd17f343ecf7ec59a5f1d0e79b59a4d))
+
+
+
+
+
+## [1.1.18](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.17...@logicflow/core@1.1.18) (2022-05-23)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.17](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.16...@logicflow/core@1.1.17) (2022-05-23)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.16](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.14...@logicflow/core@1.1.16) (2022-05-18)
+
+
+### Bug Fixes
+
+* remove unnecessary object ([fa6ad3f](https://github.com/didi/LogicFlow/commit/fa6ad3ff2c36a9a7979e03eb89ba2ca8c66b8a0b))
+
+
+### Features
+
+* add lf-node-select className to node when it is selected ([ce8f6ae](https://github.com/didi/LogicFlow/commit/ce8f6ae4f284de9896c3a0dc4791804b5bb7d23e))
+* lf-edge-select className to edge when it is selected ([6c5c301](https://github.com/didi/LogicFlow/commit/6c5c3015913a6a148c09f621873b539a3bb282c0))
+* setting horizontal and vertical offset separately for fitView ([37c464c](https://github.com/didi/LogicFlow/commit/37c464c1bb4539275e87c62e8c7e2d6701df742b))
+* support edge animation ([d66edec](https://github.com/didi/LogicFlow/commit/d66edec3c834a13242446d26cf0ac630f24495e5))
+* support wrapPadding for edge text which overflowMode is't autoWrap ([f5cc079](https://github.com/didi/LogicFlow/commit/f5cc0792dd9232dd0331312a2358519a96a9a278))
+* triger anchor-drop event when edge created ([4b355c2](https://github.com/didi/LogicFlow/commit/4b355c2361134fb85bce23b1d660f15b1476ce80))
+
+
+
+
+
+## [1.1.15](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.14...@logicflow/core@1.1.15) (2022-05-07)
+
+
+### Bug Fixes
+
+* remove unnecessary object ([b0b7507](https://github.com/didi/LogicFlow/commit/b0b7507443d5c8dd0d133bd109d26f036a1a945a))
+
+
+### Features
+
+* add lf-node-select className to node when it is selected ([ce8f6ae](https://github.com/didi/LogicFlow/commit/ce8f6ae4f284de9896c3a0dc4791804b5bb7d23e))
+* lf-edge-select className to edge when it is selected ([6c5c301](https://github.com/didi/LogicFlow/commit/6c5c3015913a6a148c09f621873b539a3bb282c0))
+* setting horizontal and vertical offset separately for fitView ([37c464c](https://github.com/didi/LogicFlow/commit/37c464c1bb4539275e87c62e8c7e2d6701df742b))
+* support edge animation ([d66edec](https://github.com/didi/LogicFlow/commit/d66edec3c834a13242446d26cf0ac630f24495e5))
+* support wrapPadding for edge text which overflowMode is't autoWrap ([f5cc079](https://github.com/didi/LogicFlow/commit/f5cc0792dd9232dd0331312a2358519a96a9a278))
+
+
+
+
+
+## [1.1.14](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.13...@logicflow/core@1.1.14) (2022-04-22)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.13](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.12...@logicflow/core@1.1.13) (2022-04-16)
+
+
+### Features
+
+* add useGlobalRules and customCssRules property ([88dadb8](https://github.com/didi/LogicFlow/commit/88dadb8e2c96d9f7ee4d4c286a6aa42c8941baaf))
+
+
+
+
+
+## [1.1.12](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.12-alpha.0...@logicflow/core@1.1.12) (2022-04-13)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.12-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.11...@logicflow/core@1.1.12-alpha.0) (2022-04-09)
+
+
+### Bug Fixes
+
+* cannot move node while width and height value is zero ([39238a2](https://github.com/didi/LogicFlow/commit/39238a27b741c7367b7a94c760d4083a2103239d))
+
+
+### Features
+
+* add api renderRawData ([07b3d80](https://github.com/didi/LogicFlow/commit/07b3d806052428a9d2edf66db2db7e0938ce010e))
+
+
+
+
+
+## [1.1.11](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.10...@logicflow/core@1.1.11) (2022-03-29)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.10](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.9...@logicflow/core@1.1.10) (2022-03-29)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.9](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.9-alpha.1...@logicflow/core@1.1.9) (2022-03-26)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.9-alpha.1](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.9-alpha.0...@logicflow/core@1.1.9-alpha.1) (2022-03-26)
+
+
+### Features
+
+* optimize move group children behavior ([d492f20](https://github.com/didi/LogicFlow/commit/d492f20a7205c81a709f7a151b9127a2709d81a4))
+* optimize move node behavior ([d0e4e85](https://github.com/didi/LogicFlow/commit/d0e4e856cf58e92a98e309cdd698724bc1163295))
+
+
+
+
+
+## [1.1.9-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.8-alpha.0...@logicflow/core@1.1.9-alpha.0) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复新增分组子节点未被记录的问题 ([24d9fc9](https://github.com/didi/LogicFlow/commit/24d9fc9d056f34141520da4a3f9482fe031ec325))
+
+
+### Features
+
+* optimize anchor line dragging behavior while near graph boundary ([0d798cc](https://github.com/didi/LogicFlow/commit/0d798ccbde91bae734e7b655d85709435626cb42))
+* remove html demo ([a744bb2](https://github.com/didi/LogicFlow/commit/a744bb2a20d1e6fd6f7ea3b1269a9a45211501ad))
+
+
+
+
+
+## [1.1.8](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.8-alpha.0...@logicflow/core@1.1.8) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复新增分组子节点未被记录的问题 ([24d9fc9](https://github.com/didi/LogicFlow/commit/24d9fc9d056f34141520da4a3f9482fe031ec325))
+
+
+### Features
+
+* optimize anchor line dragging behavior while near graph boundary ([0d798cc](https://github.com/didi/LogicFlow/commit/0d798ccbde91bae734e7b655d85709435626cb42))
+
+
+
+
+
+## [1.1.8-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.7-alpha.0...@logicflow/core@1.1.8-alpha.0) (2022-03-25)
+
+
+### Bug Fixes
+
+* 修复了`group`插件在多个`group`节点一起被折叠报错的问题。 ([396736e](https://github.com/didi/LogicFlow/commit/396736e07c320985f7c779b272085ba1f66f1083))
+* group undo cannot fold ([5860d7e](https://github.com/didi/LogicFlow/commit/5860d7ef4770f655fab1bb5ee6114dc63757b725))
+
+
+### Features
+
+* 调整translateCenter方法的挂载对象 ([d10a526](https://github.com/didi/LogicFlow/commit/d10a5263c1c922ee0b0356c01dde248dec6fe5d0))
+* 画布居中代码优化 ([d06b162](https://github.com/didi/LogicFlow/commit/d06b16296c0e655c93f6e6670f09156c89c7204e))
+* 优化画布图形居中虚拟矩形的计算规则，新增适应屏幕大小功能 ([e0c0ea1](https://github.com/didi/LogicFlow/commit/e0c0ea15f4962ca9502606fec6ddc070d65c78a7))
+* 支持画布整体居中 ([39b1532](https://github.com/didi/LogicFlow/commit/39b15324bb978b2842f6638a9fa0626621910323))
+* add node resize maxwidth and maxheight ([e98f575](https://github.com/didi/LogicFlow/commit/e98f575d19c5c7c9a74c7ad3302c1a8cb02bd5e3))
+* add vue3 example ([9969b97](https://github.com/didi/LogicFlow/commit/9969b978d93ce863901d364bc5f01a9b9f6db269))
+* optimize drag node behavior ([f88042d](https://github.com/didi/LogicFlow/commit/f88042d5623a0983003bd70098b4e0c12ba60d3d))
+
+
+
+
+
+## [1.1.7](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.7-alpha.0...@logicflow/core@1.1.7) (2022-03-07)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.7-alpha.0](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.6...@logicflow/core@1.1.7-alpha.0) (2022-03-03)
+
+
+### Bug Fixes
+
+* click node cancel edit text ([a514665](https://github.com/didi/LogicFlow/commit/a5146652b78d665d7058b7d810a26af07659ca43))
+
+
+### Features
+
+* add getAnchorShape function which allow rewrite anchor shape ([e5a7d77](https://github.com/didi/LogicFlow/commit/e5a7d77b898c93ece38e28fbdbef443ec8d23fcc))
+
+
+
+
+
+## [1.1.6](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.5...@logicflow/core@1.1.6) (2022-03-02)
+
+**Note:** Version bump only for package @logicflow/core
+
+
+
+
+
+## [1.1.5](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.4...@logicflow/core@1.1.5) (2022-03-02)
+
+
+### Bug Fixes
+
+* change strokeDasharray type from array to string ([dd9d42e](https://github.com/didi/LogicFlow/commit/dd9d42ed26da46558592124533954f23b28aade2))
+* edge animation demo ([e8895cc](https://github.com/didi/LogicFlow/commit/e8895cc230fccf007638db2cdfd79b25f7cba1b9))
+* trigger dragstart when dragging ([5ff04c8](https://github.com/didi/LogicFlow/commit/5ff04c807364a03554135d57c49b4f181b6f2414))
+
+
+### Features
+
+* anchor add event api ([4309b81](https://github.com/didi/LogicFlow/commit/4309b81902280f0dacb7fb169b6b9c34f06de3f7))
+* support animation ([c58c147](https://github.com/didi/LogicFlow/commit/c58c147c172901604834dda1a0dbb62a5f653579))
+
+
+
+
+
+## [1.1.4](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.3...@logicflow/core@1.1.4) (2022-02-23)
+
+
+### Bug Fixes
+
+* change node state to default when create edge success ([9f57894](https://github.com/didi/LogicFlow/commit/9f57894034c9b6d86323e93d22a1185fe433843c))
+* editConfigModel add isSilentMode ([8fcd571](https://github.com/didi/LogicFlow/commit/8fcd57143ccf1055a2c176ef417d7498ef178694))
+
+
+### Features
+
+* node model add incoming & outgoing ([8cf1469](https://github.com/didi/LogicFlow/commit/8cf14690b3c8378b11e5028700539a8fdb12bee1))
+* update docs ([c60d9d7](https://github.com/didi/LogicFlow/commit/c60d9d75f167ac32d871810ef2c5f7dbc5403462))
+
+
+
+
+
 ## [1.1.3](https://github.com/didi/LogicFlow/compare/@logicflow/core@1.1.3-alpha.0...@logicflow/core@1.1.3) (2022-02-18)
 
 

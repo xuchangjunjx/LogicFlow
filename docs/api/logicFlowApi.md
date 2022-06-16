@@ -19,6 +19,7 @@ const lf = new LogicFlow(options: Options)
 | [grid](#grid) | false \| Object |- | false |网格，若设为`false`不开启网格，则为 1px 移动单位，不绘制网格背景，若设置为`true`开启则默认为 20px 点状网格 |
 | [keyboard](#keyboard) | Object |- | -| 自定义键盘相关配置 |
 | [style](#style) | Object |- | - | 样式 |
+| animation | Boolean \| Object |- | - | 是否开启动画功能，可统一开关和单独配置 |
 | disabledPlugins | string[] |- | - | 传入初始化的时候，禁用加载的插件 |
 | snapline | Boolean |- | true | 是否启用节点辅助对齐线 |
 | history | Boolean |- | true | 是否开启历史记录功能 |
@@ -44,20 +45,22 @@ const lf = new LogicFlow(options: Options)
 |edgeTextDraggable|boolean| - |false|允许边文本可以拖拽|
 |multipleSelectKey|string| - |-|多选按键, 可选meta(cmd)、shift、alt。 支持组合键点击元素实现多选|
 |idGenerator|function| -|-|自定义创建节点、连线时生成id规则。|
-|plugins|Array| -|-|当前LogicFlow实力加载的插件，不传则采用全局插件。|
+|plugins|Array| -|-|当前LogicFlow实例加载的插件，不传则采用全局插件。|
 
 ### `background`
 
-背景默认无，支持选项：
+背景默认无；支持透传任何样式属性到背景层
 
 ```js
 export type BackgroundConfig = {
-  image?: string; // 背景图片地址
-  color?: string; // 背景色
-  repeat?: string; // 背景图片重复
-  position?: string; // 背景图片位置
-  size?: string; // 背景图片尺寸
-  opacity?: number; // 背景透明度
+  backgroundImage?: string; // 背景图片地址
+  backgroundColor?: string; // 背景色
+  backgroundRepeat?: string;  // 背景图片重复
+  backgroundPosition?: string; // 背景图片位置
+  backgroundSize?: string;  // 背景图片尺寸
+  backgroundOpacity?: number; // 背景透明度
+  filter?: string; // 滤镜
+  [key: any]: any;
 };
 ```
 
@@ -97,7 +100,7 @@ export interface KeyboardDef {
 ```js
 const lf = new LogicFlow({
   keyboard: {
-    enable: true
+    enabled: true
   }
 })
 ```
@@ -179,6 +182,51 @@ lf.register({
   model: UserModel,
 });
 ```
+
+## batchRegister
+
+批量注册
+
+```ts
+lf.batchRegister([
+  {
+    type: 'user',
+    view: UserNode,
+    model: UserModel,
+  },
+    {
+    type: 'user1',
+    view: UserNode1,
+    model: UserModel1,
+  },
+);
+```
+
+## render
+
+渲染图数据
+
+```js
+const lf = new LogicFlow({
+  ...
+})
+lf.render(graphData)
+```
+
+## renderRawData
+
+渲染图原始数据，和`render`的区别是在使用`adapter`后，如何还想渲染logicflow格式的数据，可以用此方法。
+
+```js
+const lf = new LogicFlow({
+  ...
+})
+lf.render({
+  nodes: [],
+  edges: []
+})
+```
+
 
 ## setTheme
 
@@ -348,6 +396,63 @@ getNodeDataById(nodeId: string): NodeConfig
 ```js
 lf.getNodeDataById('id')
 ```
+## getNodeIncomingNode
+
+获取节点所有的上一级节点
+
+```ts
+getNodeIncomingNode(nodeId: string): BaseNodeModel[]
+```
+
+参数：
+
+| 名称 | 类型 | 必传 | 默认值 | 描述 |
+| :- | :- | :- | :- | :- |
+| nodeId | String | ✅ | - | 节点id |
+
+## getNodeOutgoingNode
+
+获取节点所有的下一级节点
+
+```ts
+getNodeOutgoingNode(nodeId: string): BaseNodeModel[]
+```
+
+参数：
+
+| 名称 | 类型 | 必传 | 默认值 | 描述 |
+| :- | :- | :- | :- | :- |
+| nodeId | String | ✅ | - | 节点id |
+
+
+## getNodeIncomingEdge
+
+获取所有以此节点为终点的边
+
+```ts
+getNodeIncomingEdge(nodeId: string): BaseEdgeModel[]
+```
+
+参数：
+
+| 名称 | 类型 | 必传 | 默认值 | 描述 |
+| :- | :- | :- | :- | :- |
+| nodeId | String | ✅ | - | 节点id |
+
+## getNodeOutgoingEdge
+
+获取所有以此节点为起点的边
+
+```ts
+getNodeOutgoingEdge(nodeId: string): BaseEdgeModel[]
+```
+
+参数：
+
+| 名称 | 类型 | 必传 | 默认值 | 描述 |
+| :- | :- | :- | :- | :- |
+| nodeId | String | ✅ | - | 节点id |
+
 
 ## addEdge
 
@@ -563,15 +668,7 @@ lf.setDefaultEdgeType('line')
 ```
 ## editText
 
-显示指定节点或边的文本编辑框
-
-| 名称 | 类型 | 必传 | 默认值 | 描述 |
-| :- | :- | :- | :- | :- |
-| id | String | ✅ | - | 节点或边的id |
-
-```js
-lf.editText('element_id')
-```
+同[graphModel.editText](/api/graphModelApi.html#edittext)
 
 ## updateText
 
@@ -1051,6 +1148,14 @@ lf.translate(100, 100)
 lf.resetTranslate()
 ```
 
+## fitView
+
+将整个流程图缩小到画布能全部显示
+
+```js
+lf.fitView(deltaX, deltaY)
+```
+
 
 ## on
 
@@ -1137,10 +1242,10 @@ lf.once('node:click', () => {
 
 ## emit
 
-事件监听一次
+触发事件
 
 ```js
-emit(evt: string, callback: Function): this
+emit(evt: string, ...args): this
 ```
 
 参数：
@@ -1148,14 +1253,12 @@ emit(evt: string, callback: Function): this
 | 名称 | 类型 | 必传 | 默认值 | 描述 |
 | :- | :- | :- | :- | :- |
 | evt | String | ✅ | - | 事件名称|
-| callback | String | ✅ | - | 回调函数 |
+| args | Array | ✅ | - | 触发事件参数 |
 
 示例：
 
 ```js
-lf.emit('node:click', () => {
-  console.log('node:click')
-})
+lf.eventCenter.emit("custom:button-click", model);
 ```
 ## undo
 

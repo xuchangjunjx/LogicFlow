@@ -29,6 +29,7 @@ import { CommonTheme, EdgeTextTheme } from '../constant/DefaultTheme';
 export type PointTuple = [number, number];
 
 export type Point = {
+  id?: string,
   x: number,
   y: number,
   [key: string]: unknown;
@@ -398,6 +399,15 @@ export type AnchorConfig = {
   [key: string]: any;
 };
 /**
+ * 移动规则结果，可以支持允许水平移动，不允许垂直移动。
+ * 在分组移动到边缘时有用到。
+ */
+export type IsAllowMove = {
+  x: boolean;
+  y: boolean;
+};
+
+/**
  * 限制节点移动规则
  * model: 移动节点的model
  * deltaX: 移动的x轴距离
@@ -407,7 +417,7 @@ export type NodeMoveRule = (
   model: BaseNodeModel,
   deltaX: number,
   deltaY: number,
-) => Boolean;
+) => Boolean | IsAllowMove;
 
 export type ZoomParam = boolean | number;
 
@@ -435,3 +445,34 @@ export type DiamondAttributes = {
 } & NodeAttributes;
 
 export type ShapeStyleAttribute = CommonTheme;
+
+export type VirtualRectSize = {
+  virtualRectWidth: number,
+  virtualRectHeight: number,
+  virtualRectCenterPositionX: number,
+  virtualRectCenterPositionY: number,
+};
+
+export type ArrowPath = {
+  d: string,
+  stroke?: string,
+  fill?: string,
+  transform?: string,
+  [key: string]: any,
+};
+
+export type ArrowMarker = {
+  id: string,
+  refX?: string | number,
+  refY?: string | number,
+  overflow?: string,
+  orient?: string,
+  markerUnits?: string,
+  viewBox?: string,
+  markerWidth?: number,
+  markerHeight?: number,
+  path: ArrowPath,
+  [key: string]: any,
+};
+
+export type ArrowMarkerList = ArrowMarker[];
